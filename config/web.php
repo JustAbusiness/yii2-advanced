@@ -43,10 +43,10 @@ $config = [
           ],
           'db' => $db,
           'urlManager' => [
-              'enablePrettyUrl' => true,
-              'showScriptName' => false,
-              'rules' => [
-              ],
+               'enablePrettyUrl' => true,
+               'showScriptName' => false,
+               'rules' => [
+               ],
           ],
      ],
      'modules' => [
@@ -57,6 +57,7 @@ $config = [
                // 'i18n' => [],
                // 'exportEncryptSalt' => 'tG85vd1',
           ],
+          'settings' => ['class' => 'app\modules\settings\Settings',]
      ],
      'controllerMap' => [
           'file' => 'mdm\\upload\\FileController', // use to show or download file

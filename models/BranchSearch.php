@@ -18,7 +18,7 @@ class BranchSearch extends Branches
     {
         return [
             [['id', 'company_id'], 'integer'],
-            [['name', 'address', 'status', 'created_at', 'updated_at'], 'safe'],
+            [['name', 'company_id'. 'address', 'status', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -48,7 +48,7 @@ class BranchSearch extends Branches
             'query' => $query,
         ]);
 
-        $this->load($params);
+        $this->load($params, '');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -56,6 +56,7 @@ class BranchSearch extends Branches
             return $dataProvider;
         }
 
+        $query->joinWith('company');
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -66,7 +67,8 @@ class BranchSearch extends Branches
 
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'address', $this->address])
-            ->andFilterWhere(['like', 'status', $this->status]);
+            ->andFilterWhere(['like', 'status', $this->status])
+            ->andFilterWhere(['like', 'companies.name', $this->company_id]);
 
         return $dataProvider;
     }
