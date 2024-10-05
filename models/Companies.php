@@ -17,39 +17,43 @@ use Yii;
  */
 class Companies extends \yii\db\ActiveRecord
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'companies';
-    }
+     public $file;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['name', 'address'], 'required'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['name', 'address', 'email', 'status'], 'string', 'max' => 255],
-        ];
-    }
+     /**
+      * {@inheritdoc}
+      */
+     public static function tableName()
+     {
+          return 'companies';
+     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'name' => 'Name',
-            'address' => 'Address',
-            'email' => 'Email',
-            'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-        ];
-    }
+     /**
+      * {@inheritdoc}
+      */
+     public function rules()
+     {
+          return [
+               [['name', 'address'], 'required'],
+               [['created_at', 'updated_at'], 'safe'],
+               [['file'], 'file', 'extensions' => 'jpg, png'],
+               [['name', 'address', 'email', 'status', 'logo'], 'string', 'max' => 255],
+          ];
+     }
+
+     /**
+      * {@inheritdoc}
+      */
+     public function attributeLabels()
+     {
+          return [
+               'id' => 'ID',
+               'name' => 'Name',
+               'address' => 'Address',
+               'email' => 'Email',
+               'status' => 'Status',
+               'created_at' => 'Created At',
+               'updated_at' => 'Updated At',
+               'file' => 'Logo',
+          ];
+     }
 }
