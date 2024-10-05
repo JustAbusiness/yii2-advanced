@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Companies;
 use app\models\CompanySearch;
 use yii\web\Controller;
@@ -68,24 +69,28 @@ class CompanyController extends Controller
       */
      public function actionCreate()
      {
-          $model = new Companies();
+          if (Yii::$app->user->can('create-company')) {
+               $model = new Companies();
 
-          if ($this->request->isPost) {
-               if ($model->load($this->request->post())) {
-                    // Get the instance of the uploaded file
-                    $imageName = $model->name;
-                    $model->file = UploadedFile::getInstances($model, 'file');
-                    $model->file = $this->saveAs('uploads/' . $imageName . '.' . $model->file->extension);
-                    // Save the uploaded image
-                    $model->logo = '/uploads/' . $imageName . '.' . $model->file->extension;
-                    $model->created_at = date('Y-m-d H:i:s');
-                    $model->updated_at = date('Y-m-d H:i:s');
-                    if ($model->save()) {
-                         return $this->redirect(['view', 'id' => $model->id]);
+               if ($this->request->isPost) {
+                    if ($model->load($this->request->post())) {
+                         // Get the instance of the uploaded file
+                         $imageName = $model->name;
+                         $model->file = UploadedFile::getInstances($model, 'file');
+                         $model->file = $this->saveAs('uploads/' . $imageName . '.' . $model->file->extension);
+                         // Save the uploaded image
+                         $model->logo = '/uploads/' . $imageName . '.' . $model->file->extension;
+                         $model->created_at = date('Y-m-d H:i:s');
+                         $model->updated_at = date('Y-m-d H:i:s');
+                         if ($model->save()) {
+                              return $this->redirect(['view', 'id' => $model->id]);
+                         }
                     }
+               } else {
+                    $model->loadDefaultValues();
                }
           } else {
-               $model->loadDefaultValues();
+                  throw new ForbiddenHttpException('You are not allowed to perform this action.');
           }
 
           return $this->render('create', [
