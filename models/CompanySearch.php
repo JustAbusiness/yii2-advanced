@@ -11,6 +11,7 @@ use app\models\Companies;
  */
 class CompanySearch extends Companies
 {
+     public $globalSearch;
     /**
      * {@inheritdoc}
      */
@@ -18,7 +19,7 @@ class CompanySearch extends Companies
     {
         return [
             [['id'], 'integer'],
-            [['name', 'address', 'email', 'status', 'created_at', 'updated_at'], 'safe'],
+            [['name', 'address', 'globalSearch', 'email', 'status', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -63,10 +64,10 @@ class CompanySearch extends Companies
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'address', $this->address])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'status', $this->status]);
+        $query->orFilterWhere(['like', 'name', $this->globalSearch])
+            ->orFilterWhere(['like', 'address', $this->globalSearch])
+            ->orFilterWhere(['like', 'email', $this->globalSearch])
+            ->orFilterWhere(['like', 'status', $this->globalSearch]);
 
         return $dataProvider;
     }

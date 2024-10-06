@@ -51,6 +51,9 @@ $config = [
                'rules' => [
                ],
           ],
+          'MyComponent' => [
+               'class' => 'app\components\MyComponent',
+          ],
      ],
      'modules' => [
           'gridview' => [

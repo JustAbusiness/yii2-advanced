@@ -2,9 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\Branches;
 use Yii;
 use app\models\Companies;
 use app\models\CompanySearch;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -66,35 +68,46 @@ class CompanyController extends Controller
       * Creates a new Companies model.
       * If creation is successful, the browser will be redirected to the 'view' page.
       * @return string|\yii\web\Response
+      * @throws Exception
       */
      public function actionCreate()
      {
           if (Yii::$app->user->can('create-company')) {
                $model = new Companies();
+               $branch = new Branches();
+
 
                if ($this->request->isPost) {
-                    if ($model->load($this->request->post())) {
+                    if ($model->load($this->request->post()) && $branch->load($this->request->post())) {
                          // Get the instance of the uploaded file
                          $imageName = $model->name;
-                         $model->file = UploadedFile::getInstances($model, 'file');
-                         $model->file = $this->saveAs('uploads/' . $imageName . '.' . $model->file->extension);
-                         // Save the uploaded image
-                         $model->logo = '/uploads/' . $imageName . '.' . $model->file->extension;
-                         $model->created_at = date('Y-m-d H:i:s');
-                         $model->updated_at = date('Y-m-d H:i:s');
-                         if ($model->save()) {
-                              return $this->redirect(['view', 'id' => $model->id]);
+                         if (!empty($model->file)) {
+                              $model->file = UploadedFile::getInstance($model, 'file');
+                              $model->file = $this->saveAs('uploads/' . $imageName . '.' . $model->file->extension);
+                              // Save the uploaded image
+                              $model->logo = '/uploads/' . $imageName . '.' . $model->file->extension;
+                              $model->created_at = date('Y-m-d H:i:s');
+                              $model->updated_at = date('Y-m-d H:i:s');
+                              if ($model->save()) {
+                                   $branch->company_id = $model->id;
+                                   $branch->created_at = date('Y-m-d H:i:s');
+                                   $branch->updated_at = date('Y-m-d H:i:s');
+                                   if ($branch->save()) {
+                                        return $this->redirect(['view', 'id' => $model->id]);
+                                   }
+                              }
                          }
                     }
                } else {
                     $model->loadDefaultValues();
                }
           } else {
-                  throw new ForbiddenHttpException('You are not allowed to perform this action.');
+               throw new ForbiddenHttpException('You are not allowed to perform this action.');
           }
 
           return $this->render('create', [
                'model' => $model,
+               'branch' => $branch,
           ]);
      }
 

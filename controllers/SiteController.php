@@ -69,6 +69,11 @@ class SiteController extends Controller
           return $this->render('index');
      }
 
+     public function actionOtherIndex()
+     {
+          Yii::$app->MyComponent->welcome();
+          die();
+     }
      /**
       * Login action.
       *
